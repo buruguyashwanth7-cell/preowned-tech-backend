@@ -6,12 +6,6 @@ const { ensureCsrfToken } = require("../middleware/csrf");
 const validate = require("../middleware/validate");
 const { requireAuth } = require("../middleware/auth");
 const {
-  registerLimiter,
-  loginLimiter,
-  passwordRecoveryLimiter,
-  changePasswordLimiter,
-} = require("../middleware/rateLimiters");
-const {
   registerSchema,
   verifyEmailSchema,
   loginSchema,
@@ -40,29 +34,17 @@ router.get("/csrf-token", (req, res) => {
   res.json({ csrfToken: ensureCsrfToken(req) });
 });
 
-// The limiter always runs BEFORE validation and the controller.
-router.post("/register", registerLimiter, validate(registerSchema), register);
+router.post("/register", validate(registerSchema), register);
 router.post("/verify-email", validate(verifyEmailSchema), verifyEmail);
-router.post("/login", loginLimiter, validate(loginSchema), login);
+router.post("/login", validate(loginSchema), login);
 router.post("/logout", logout);
 router.get("/me", requireAuth, me);
 
-router.post(
-  "/forgot-password",
-  passwordRecoveryLimiter,
-  validate(forgotPasswordSchema),
-  forgotPassword
-);
-router.post(
-  "/reset-password",
-  passwordRecoveryLimiter,
-  validate(resetPasswordSchema),
-  resetPassword
-);
+router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
+router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 router.post(
   "/change-password",
   requireAuth,
-  changePasswordLimiter,
   validate(changePasswordSchema),
   changePassword
 );
