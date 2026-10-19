@@ -13,6 +13,9 @@ function createLimiter({ windowMs, limit, message, skipSuccessfulRequests = fals
     legacyHeaders: false,
     skipSuccessfulRequests, // true = only failed requests are counted
     message: { message }, // sent as JSON together with the 429 status
+    // Tests only: lets a test file switch limiting off. Does nothing outside tests.
+    skip: () =>
+      process.env.NODE_ENV === "test" && process.env.DISABLE_RATE_LIMIT === "1",
   });
 }
 
