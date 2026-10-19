@@ -2,9 +2,10 @@
 // A small "fake browser" for tests: it keeps cookies and the CSRF token.
 
 const request = require("supertest");
-const app = require("../../src/app");
+const defaultApp = require("../../src/app");
 
-async function createClient() {
+// Pass a different app to talk to it instead of the real one.
+async function createClient(app = defaultApp) {
   const agent = request.agent(app); // an agent remembers cookies
   let csrf = (await agent.get("/api/auth/csrf-token")).body.csrfToken;
 
